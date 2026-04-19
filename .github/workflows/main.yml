@@ -8,12 +8,15 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -118,4 +121,8 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Деплой Kittygram успешно завершен! Автотесты пройдены!
+        message: |
+          Деплой Kittygram успешно завершен!
+          Пользователь: ${{ github.actor }}
+          Сообщение: ${{ github.event.commits[0].message }}
+          Ссылка: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
